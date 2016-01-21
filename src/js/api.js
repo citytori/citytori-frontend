@@ -9,8 +9,19 @@ module.exports = {
     return util.apiGet('/rooms/' + params.roomId + '/initialValue');
   },
 
-  // API の仕様のため，resultTimeのパラメータでスコアアタック時の結果のAnswerNumを送ってます
   getRanking: function (userId, roomId, resultTime, rankCount, rankSort) {
 	   return util.apiGet('/ranks?userId=' + userId + '&roomId=' + roomId + '&resultTime=' + resultTime + '&rankCount=' + rankCount + '&rankSort=' + rankSort);
+  },
+
+  sessionCreate: function (params) {
+    return util.apiPost('/session', params);
+  },
+
+  roomsCreate: function (params) {
+    return util.apiPost('/rooms', params);
+  },
+
+  ranksIndex: function (params) {
+    return util.apiGet('/ranks', params);
   }
 };
