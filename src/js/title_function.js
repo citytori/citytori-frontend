@@ -1,57 +1,40 @@
 var sounds = require("./sounds");
+var api = require('./api');
 
 // register name
-function register(name){
-		$.ajax({
-			type:"post",
-			url:"http://ec2-52-192-125-118.ap-northeast-1.compute.amazonaws.com/citytori/api/session",
-			data:JSON.stringify({"name":name}),
-			contentType:"application/json",
-			dataType:"json",
-			success:function(data){
-				console.log(data);
-				if(data.status == "OK"){
-					$.cookie("name", name);
-					$.cookie("userId", data.userId);
-					game.transition('selectPlayMode', 'ようこそ「' + $.cookie('name') + '」 プレイ人数を選択してね！');
-				}else{
-					$("#description").text("別の名前を入力してね！");
-					$("#name").select();
-				}
-			},
-			error:function(){
-				console.log("error");
-			}
-		});
+function register(name) {
+	api.sessionCreate({ user: name }).done(function (data) {
+		console.log(data);
+		if (data.status == "OK") {
+			$.cookie("name", name);
+			$.cookie("userId", data.userId);
+			game.transition('selectPlayMode', 'ようこそ「' + $.cookie('name') + '」 プレイ人数を選択してね！');
+		} else {
+			$("#description").text("別の名前を入力してね！");
+			$("#name").select();
+		}
+	});
 };
 
 // make room
 function makeroom(userId, name, gameMode, wordNum, limitTime){
-
 	sounds.sound_title_pause();
 
-	$.ajax({
-		type:"post",
-		url:"http://ec2-52-192-125-118.ap-northeast-1.compute.amazonaws.com/citytori/api/rooms",
-		data:JSON.stringify({"userId":userId,"name":name,"gameMode":gameMode,"wordNum":wordNum,"limitTime":limitTime}),
-		contentType:"application/json",
-		dataType:"json",
-		success:function(data){
-			$.cookie("roomId", data.id);
-			if(limitTime == 0){
-				//transition to timeattack
-				$.cookie("resultType", 'Time');
-				$.cookie("wordNum", wordNum);
-				game.transition('playGameSingle', 'タイムアタック!');
-			}else if(wordNum == 0){
-				//trainsition to scoreattack !!!!!!!!!!!!!!!!!!! need to change true link !!!!!!!!!!!!!!!!!!!!!!
-				$.cookie("resultType", 'Score');
-				$.cookie("limitTime", limitTime);
-				game.transition('playGameSingle', 'タイムアタック!');
-			}
-		},
-		error:function(){
-			console.log("error");
+	api.roomsCreate({
+		userId: userId, name: name, gameMode: gameMode, wordNum: wordNum, limitTime: limitTime
+	}).done(function (data) {
+		$.cookie("roomId", data.id);
+
+		if (limitTime == 0) {
+			//transition to timeattack
+			$.cookie("resultType", 'Time');
+			$.cookie("wordNum", wordNum);
+			game.transition('playGameSingle', 'タイムアタック!');
+		} else if (wordNum == 0) {
+			//trainsition to scoreattack !!!!!!!!!!!!!!!!!!! need to change true link !!!!!!!!!!!!!!!!!!!!!!
+			$.cookie("resultType", 'Score');
+			$.cookie("limitTime", limitTime);
+			game.transition('playGameSingle', 'タイムアタック!');
 		}
 	});
 };
@@ -66,37 +49,33 @@ function sendranking(){
 	roomId = "565d957b575db0e4f33e25b6";
 	resultTime = 24;
 	rankCount = 0;
-	$.ajax({
-		url: "http://ec2-52-192-125-118.ap-northeast-1.compute.amazonaws.com/citytori/api/ranks",
-		data: {
-			userId: userId,
-			roomId: roomId,
-			resultTime: resultTime,
-			rankCount: rankCount,
-		},
-		success: function(json){
-			var arraySize = Object.keys(json.ranking).length;
-			for (var i = 0; i < arraySize; i++) {
-				if(json.ranking[i].name == "Mr. シティとり"){
-					$("#ranking").append("<span id=\"myscore\">- 今回の成績 -<br>" + (i + 1) + "位</br>" + json.ranking[i].name + "</br>" + json.ranking[i].score + " 秒</br><HR></span>");
-				}else{
-					$("#ranking").append("<span>" + (i + 1) + "位</br>" + json.ranking[i].name + "</br>" + json.ranking[i].score + " 秒</br><HR></span>");
-				}
-			}
-			$("#ranking").append("<br>");
 
-			for (var i=0; i < arraySize; i++){
-				if(json.ranking[i].name == "Mr. シティとり"){
-					v = i;
-					break;
-				}
+	api.ranksIndex({
+		userId: userId,
+		roomId: roomId,
+		resultTime: resultTime,
+		rankCount: rankCount,
+	}).done(function (data) {
+		var arraySize = Object.keys(json.ranking).length;
+
+		for (var i = 0; i < arraySize; i++) {
+			if (json.ranking[i].name == "Mr. シティとり") {
+				$("#ranking").append("<span id=\"myscore\">- 今回の成績 -<br>" + (i + 1) + "位</br>" + json.ranking[i].name + "</br>" + json.ranking[i].score + " 秒</br><HR></span>");
+			} else {
+				$("#ranking").append("<span>" + (i + 1) + "位</br>" + json.ranking[i].name + "</br>" + json.ranking[i].score + " 秒</br><HR></span>");
 			}
-			var v = i * 131 * $("#main_in").width() / 1500;
-			$("#rankingboard").scrollTop(v);
-		},
-		error: function(){
-		console.log("error");
 		}
+
+		$("#ranking").append("<br>");
+
+		for (var i=0; i < arraySize; i++) {
+			if(json.ranking[i].name == "Mr. シティとり") {
+				v = i;
+				break;
+			}
+		}
+		var v = i * 131 * $("#main_in").width() / 1500;
+		$("#rankingboard").scrollTop(v);
 	});
 };
 

@@ -1,5 +1,6 @@
 var path = require('path');
 var webpack = require('webpack');
+require('dotenv').config({ silent: true });
 
 module.exports = {
   entry: './src/js/main.js',
@@ -27,6 +28,10 @@ module.exports = {
       jQuery: "jquery",
       $: "jquery",
       jquery: "jquery"
+    }),
+    new webpack.DefinePlugin({
+      CITYTORY_API_SERVER:
+        JSON.stringify(process.env.CITYTORY_API_SERVER || 'http://localhost:8080')
     })
   ]
 }
