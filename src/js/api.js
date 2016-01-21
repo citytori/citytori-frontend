@@ -9,8 +9,14 @@ module.exports = {
     return util.apiGet('/rooms/' + params.roomId + '/initialValue');
   },
 
-  getRanking: function (userId, roomId, resultTime, rankCount, rankSort) {
-	   return util.apiGet('/ranks?userId=' + userId + '&roomId=' + roomId + '&resultTime=' + resultTime + '&rankCount=' + rankCount + '&rankSort=' + rankSort + '&limitTime=' + limitTime);
+  getRanking: function (userId, roomId, resultTime, rankCount, rankSort, limitTime) {
+	   return util.apiGet(
+       '/ranks?userId=' + userId +
+       '&roomId=' + roomId +
+       '&resultTime=' + resultTime +
+       '&rankCount=' + rankCount +
+       '&rankSort=' + rankSort +
+       '&limitTime=' + limitTime);
   },
 
   sessionCreate: function (params) {
