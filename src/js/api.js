@@ -10,7 +10,7 @@ module.exports = {
   },
 
   getRanking: function (userId, roomId, resultTime, rankCount, rankSort) {
-	   return util.apiGet('/ranks?userId=' + userId + '&roomId=' + roomId + '&resultTime=' + resultTime + '&rankCount=' + rankCount + '&rankSort=' + rankSort);
+	   return util.apiGet('/ranks?userId=' + userId + '&roomId=' + roomId + '&resultTime=' + resultTime + '&rankCount=' + rankCount + '&rankSort=' + rankSort + '&limitTime=' + limitTime);
   },
 
   sessionCreate: function (params) {
