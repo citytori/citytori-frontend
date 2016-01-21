@@ -3,7 +3,7 @@ var api = require('./api');
 
 // register name
 function register(name) {
-	api.sessionCreate({ user: name }).done(function (data) {
+	api.sessionCreate({ name: name }).done(function (data) {
 		console.log(data);
 		if (data.status == "OK") {
 			$.cookie("name", name);

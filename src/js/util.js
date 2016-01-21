@@ -1,7 +1,7 @@
 module.exports = {
   callApi: function (method, path, data) {
     var hostname = CITYTORY_API_SERVER;
-    var url = 'http://' + hostname + '/citytori/api' + path;
+    var url = hostname + '/citytori/api' + path;
 
     return $.ajax({
       type: method,
