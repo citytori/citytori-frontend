@@ -32,3 +32,6 @@ bower_components
 
 # troublesome when pull, push, commit
 public/js/bundle.js
+
+# dotenv file
+.env
