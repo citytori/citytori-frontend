@@ -25,7 +25,7 @@ var GameScene = function () {
       that.map = new google.maps.Map(document.querySelector('#map'), {
         center: {lat: 35.681382, lng: 139.766084},
         zoom: 12,
-        // maxZoom: 12,
+        maxZoom: 16,
         // minZoom: 12,
         disableDefaultUI: true,
         // mapTypeId: google.maps.MapTypeId.TERRAIN,
