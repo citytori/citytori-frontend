@@ -97,6 +97,15 @@ $("#register_off").mouseup(function(){
 	}
 });
 
+$("#name").keypress(function(e) {
+	if (e.which != 13) return;
+	
+	if ($("#name").val() != "") {
+		register($("#name").val());
+	}
+});
+
+
 $("#register_off").mouseout(function(){
 	$(this).css({
 		"background": $(this).css("background").replace("_on","_off")
