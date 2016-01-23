@@ -49,6 +49,7 @@ var GameScene = function () {
       that.map.addListener('click', that.mapClicked.bind(that));
       $('#js-cancel-button').on('click', that.closeAnswerDialog.bind(that));
       $('#js-game-user-name').text($.cookie('name'));
+      $('#js-game-pass-btn').on('click', that.passButtonClicked.bind(that));
       that.currentTheme = { phonetic: data.theme };
       that.updateAnswerCount();
       that.updateGameModeText();
@@ -130,6 +131,10 @@ p.locationNameClicked = function (e, place) {
   this.answer(place);
 };
 
+p.passButtonClicked = function (e) {
+  this.pass();
+};
+
 p.createLocationLinkElement = function (place) {
   var that = this;
   var link = document.createElement('a');
@@ -169,21 +174,24 @@ p.createInfoWindowContentElement = function (places) {
   return content;
 };
 
-p.answer = function (place) {
+p.answer = function (place, isPass) {
   var that = this;
 
   api.answersCreate({roomId: $.cookie('roomId')}, {
     locationName: place.locationName,
     phonetic: place.phonetic,
-    userId: $.cookie('userId')
+    userId: $.cookie('userId'),
+    isPass: isPass
   }).done(function (data) {
     console.debug(data);
 
     if (data.result.startsWith('NG')) return that.answerNG(place);
+    if (data.isPass == 'false') {
+      that.answerOK(place, data.result == 'Finish');
+      that.addAnswer(place);
+    }
 
-    that.answerOK(place, data.result == 'Finish');
-    that.currentTheme = place;
-    that.addAnswer(place);
+    that.currentTheme = data;
   });
 
   return true;
@@ -299,6 +307,10 @@ p.clearGame = function () {
   $.cookie('resultTime', this._resultTime._milliseconds);
   this.game.transition('gameFinish', '君のタイムは何位かな？');
   clearInterval(this._updateTimeTextIntervalID);
+};
+
+p.pass = function () {
+  this.answer({}, true);
 };
 
 /**
