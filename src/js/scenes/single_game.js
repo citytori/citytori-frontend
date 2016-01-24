@@ -233,11 +233,12 @@ p.updateTimeText = function () {
     if (remainsTime <= 0) {
       clearInterval(this._dangerInterval);
       this.clearGame();
-    } else if (remainsTime < 20000) {
+    } else if (remainsTime < 11000) {
       if (!this._dangerInterval) {
         this._dangerInterval = setInterval(function () {
           $('#map').toggleClass('game-map-danger');
-        }, remainsTime >= 13000 ? 1000 : 200);
+        }, 1000);
+//        }, remainsTime >= 13000 ? 1000 : 200);
       }
     }
   }
