@@ -102,8 +102,11 @@ p.mapClicked = function (e) {
   });
 };
 
+var dialogOpened = false;
+
 p.openAnswerDialog = function (places) {
   var that = this;
+  dialogOpened = true;
 
   $('#js-answer-result').hide();
   $('#js-answer-candidates').html('');
@@ -124,8 +127,15 @@ p.openAnswerDialog = function (places) {
 }
 
 p.closeAnswerDialog = function (places) {
+  dialogOpened = false;
   $('#js-game-answer-dialog').hide();
 }
+
+document.onkeydown = function(e) {
+  if (e.which != 27 || dialogOpened != true) return;
+  
+  p.closeAnswerDialog();
+};
 
 p.locationNameClicked = function (e, place) {
   this.answer(place);
